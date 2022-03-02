@@ -4,8 +4,26 @@ const questionContainerEl = document.getElementById('question-container');
 const questionEl = document.getElementById('question')
 const answerButtonsEl = document.getElementById('answer-buttons');
 const feedbackContainerEl = document.getElementById('feedback-container');
-
+let answered = false;
 let shuffledQuestions, currentQuestionIndex;
+let time = 60;
+
+let highscore = JSON.parse(localStorage.getItem("highscores")) || [];
+let currentScore = 0
+// [
+//     {
+//         initials: '', score: 0
+//     }
+// ]
+
+//ADD TIMER
+
+var startTimer = setInterval(() => {
+    time -= 1;
+    var timerDisplay = document.createElement("p")
+    body.appendChild(timerDisplay);
+}, 1000)
+
 
 const questions = [
     {
@@ -31,6 +49,16 @@ const questions = [
     }
 ];
 
+// input score obj for player push to highscore array
+
+function saveScore(){
+// set local storage
+}
+
+function displayHighscores() {
+// append highscores to page
+}
+
 function clearFeedback() {
     document.getElementById('feedback').remove
 };
@@ -51,23 +79,30 @@ function displayFeedback(correct){
     let feedbackP = feedbackContainerEl.firstChild
     if (correct) {
         feedbackP.textContent =  "Correct"
-        // feedbackContainerEl.appendChild(feedbackP)
         document.getElementById('feedback-container').classList.remove('hide')
+        highscore.score += 10
+        // time is score
     } else {
         feedbackP.textContent =  "Incorrect"
-        // feedbackContainerEl.appendChild(feedbackP)
         document.getElementById('feedback-container').classList.remove('hide')
+        // take time away
     }
 };
 
 function answerClicked(event) {
     const selectedButton = event.target;
     const correct = selectedButton.dataset.correct;
-    displayFeedback(correct)
+    if (answered === false) {
+        answered = true
+        displayFeedback(correct)
+    }
 
     if (shuffledQuestions.length > currentQuestionIndex + 1) {
         nextButton.classList.remove('hide');
     } else {
+        //hide everything, ask for initials to store, display highscores
+        //need save/load functions
+        console.log(highscore)
         startButton.innerText = 'Restart';
         startButton.classList.remove('hide');
     };
@@ -89,6 +124,7 @@ function showQuestion(question){
 };
 
 function startGame(){
+    answered = false;
     startButton.classList.add('hide');
     feedbackContainerEl.classList.add('hide')
     shuffledQuestions= questions.sort(() => Math.random - .5); //make random work
@@ -101,6 +137,7 @@ function startGame(){
 startButton.addEventListener('click', startGame);
 
 nextButton.addEventListener('click', () => {
+    answered = false;
     feedbackContainerEl.classList.add('hide')
     currentQuestionIndex++
     setNextQuestion()

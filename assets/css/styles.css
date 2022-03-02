@@ -14,8 +14,9 @@ body{
     padding: 0;
     margin: 0;
     display: flex;
+    flex-direction: column;
     width: 100vw;
-    height: 100vh;
+    height: 70vh;
     justify-content: center;
     align-items: center;
     background-color: white;
@@ -28,6 +29,12 @@ body.correct{
 body.incorrect{
     --hue: var(--incorrect-hue)
 }
+
+.start-message{
+    font-size: 2em;
+    text-align: center;
+}
+
 
 .container{
     width: 800px;
