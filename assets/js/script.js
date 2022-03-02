@@ -3,6 +3,7 @@ const nextButton = document.getElementById('next-btn');
 const questionContainerEl = document.getElementById('question-container');
 const questionEl = document.getElementById('question')
 const answerButtonsEl = document.getElementById('answer-buttons');
+const feedbackContainerEl = document.getElementById('feedback-container');
 
 let shuffledQuestions, currentQuestionIndex;
 
@@ -30,9 +31,8 @@ const questions = [
     }
 ];
 
-function clearFeedback(element) {
-    element.classList.remove('correct')
-    element.classList.remove('incorrect')
+function clearFeedback() {
+    document.getElementById('feedback').remove
 };
 
 function resetState() {
@@ -47,24 +47,23 @@ function setNextQuestion() {
     showQuestion(shuffledQuestions[currentQuestionIndex]);
 };
 
-function displayFeedback(element, correct){
-    let feedbackP = document.createElement('p')
-    feedbackP.className = "feedback"
-    feedbackP.id = "feedback"
-    clearFeedback(element)
+function displayFeedback(correct){
+    let feedbackP = feedbackContainerEl.firstChild
     if (correct) {
         feedbackP.textContent =  "Correct"
-        questionContainerEl.appendChild(feedbackP)
+        // feedbackContainerEl.appendChild(feedbackP)
+        document.getElementById('feedback-container').classList.remove('hide')
     } else {
         feedbackP.textContent =  "Incorrect"
-        questionContainerEl.appendChild(feedbackP)
+        // feedbackContainerEl.appendChild(feedbackP)
+        document.getElementById('feedback-container').classList.remove('hide')
     }
 };
 
 function answerClicked(event) {
     const selectedButton = event.target;
     const correct = selectedButton.dataset.correct;
-    displayFeedback(selectedButton, correct)
+    displayFeedback(correct)
 
     if (shuffledQuestions.length > currentQuestionIndex + 1) {
         nextButton.classList.remove('hide');
@@ -90,18 +89,19 @@ function showQuestion(question){
 };
 
 function startGame(){
-    console.log('started')
     startButton.classList.add('hide');
+    feedbackContainerEl.classList.add('hide')
     shuffledQuestions= questions.sort(() => Math.random - .5); //make random work
     currentQuestionIndex = 0;
     questionContainerEl.classList.remove('hide');
     setNextQuestion();
+    clearFeedback()
 };
 
 startButton.addEventListener('click', startGame);
 
 nextButton.addEventListener('click', () => {
-    document.getElementById('feedback').remove()
+    feedbackContainerEl.classList.add('hide')
     currentQuestionIndex++
     setNextQuestion()
 });

@@ -37,9 +37,9 @@ body.incorrect{
     padding: 10px;
 }
 
-#answer-buttons{
-    padding-bottom: 40px;
+#feedback-container{
     border-bottom: 5px solid rgb(209, 208, 208);
+    margin-bottom: 40px;
 }
 
 #question {
