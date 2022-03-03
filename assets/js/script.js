@@ -8,17 +8,8 @@ const startMessageEl = document.getElementById('start-message');
 let answered = false;
 let shuffledQuestions, currentQuestionIndex;
 
-let highscore = JSON.parse(localStorage.getItem("highscores")) || [];
-let currentScore = 0;
-// [
-//     {
-//         initials: '', score: 0
-//     }
-// ]
-
-//ADD TIMER
 const startingMinute = 1;
-let time = startingMinute * 5;
+let time = startingMinute * 30;
 const timerEl = document.getElementById('timer');
 
 function countdown() {
@@ -33,7 +24,6 @@ function countdown() {
         saveScore(time)
         displayHighscores()
     }
-
 };
 
 const questions = [
@@ -64,6 +54,7 @@ const questions = [
 
 function saveScore(time){
 // set local storage
+    //let highscore = JSON.parse(localStorage.getItem("highscores")) || [];
 }
 
 function displayHighscores() {
@@ -121,7 +112,6 @@ function answerClicked(event) {
     } else {
         //hide everything, ask for initials to store, display highscores
         //need save/load functions
-        console.log(highscore)
         startButton.innerText = 'Restart';
         startButton.classList.remove('hide');
     };
@@ -143,6 +133,7 @@ function showQuestion(question){
 };
 
 function startGame(){
+    debugger;
     answered = false;
 
     setInterval(countdown, 1000);
