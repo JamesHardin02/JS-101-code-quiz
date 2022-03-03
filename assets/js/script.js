@@ -4,12 +4,12 @@ const questionContainerEl = document.getElementById('question-container');
 const questionEl = document.getElementById('question')
 const answerButtonsEl = document.getElementById('answer-buttons');
 const feedbackContainerEl = document.getElementById('feedback-container');
+const startMessageEl = document.getElementById('start-message');
 let answered = false;
 let shuffledQuestions, currentQuestionIndex;
-let time = 60;
 
 let highscore = JSON.parse(localStorage.getItem("highscores")) || [];
-let currentScore = 0
+let currentScore = 0;
 // [
 //     {
 //         initials: '', score: 0
@@ -17,13 +17,24 @@ let currentScore = 0
 // ]
 
 //ADD TIMER
+const startingMinute = 1;
+let time = startingMinute * 5;
+const timerEl = document.getElementById('timer');
 
-var startTimer = setInterval(() => {
-    time -= 1;
-    var timerDisplay = document.createElement("p")
-    body.appendChild(timerDisplay);
-}, 1000)
+function countdown() {
+    if (time >= 0) {
+        const minutes = Math.floor(time/60);
+        let seconds = time % 60;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        timerEl.innerHTML = `${minutes}:${seconds}`;
+        time--
+    } else {
+        time = 0
+        saveScore(time)
+        displayHighscores()
+    }
 
+};
 
 const questions = [
     {
@@ -51,12 +62,19 @@ const questions = [
 
 // input score obj for player push to highscore array
 
-function saveScore(){
+function saveScore(time){
 // set local storage
 }
 
 function displayHighscores() {
 // append highscores to page
+    questionContainerEl.classList.add('hide');
+    feedbackContainerEl.classList.add('hide');
+    
+}
+
+function enterInitialsMenu() {
+
 }
 
 function clearFeedback() {
@@ -80,11 +98,12 @@ function displayFeedback(correct){
     if (correct) {
         feedbackP.textContent =  "Correct"
         document.getElementById('feedback-container').classList.remove('hide')
-        highscore.score += 10
+        time += 5
         // time is score
     } else {
         feedbackP.textContent =  "Incorrect"
         document.getElementById('feedback-container').classList.remove('hide')
+        time -= 5
         // take time away
     }
 };
@@ -125,11 +144,16 @@ function showQuestion(question){
 
 function startGame(){
     answered = false;
+
+    setInterval(countdown, 1000);
     startButton.classList.add('hide');
     feedbackContainerEl.classList.add('hide')
+    startMessageEl.classList.add('hide')
+
     shuffledQuestions= questions.sort(() => Math.random - .5); //make random work
     currentQuestionIndex = 0;
     questionContainerEl.classList.remove('hide');
+
     setNextQuestion();
     clearFeedback()
 };

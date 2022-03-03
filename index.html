@@ -10,14 +10,33 @@
 </head>
 <body>
     <header>
-        <div class="start-message">
+        <a href="#highscores">view highscores here</a>
+        <p id="timer" class="timer"></p>
+        <div id="start-message" class="start-message">
             <h1>JavaScript Coding Quiz</h1>
             <h2>view high scores</h2>
-            <p>There are 10 questions in this quiz each worth 10 points</p>
+            <p>The timer is your score. Incorrect answers take 5 seconds off<br/>
+                correct answers add 5 seconds. Start time is 60 seconds.
+            </p>
         </div>
     </header>
+
+    <section id="log-score" class="log-score hide">
+        <form id="inital-input" class="initial-input">
+            <label for="initials">Enter your initials: 
+                <input type="text" name="initials"placeholder="ex. ABC"/>
+                <button type="submit">Submit</button>
+                <p id="highscore-display">Highscore: 55</p>
+            </label>
+        </form>
+    </section>
+
+    <section id="highscores">
+        <p>highscores</p>
+    </section>
+    
     <!-- container holds quiz content -->
-    <div class="container">
+    <section class="container">
         <!-- question-container holds question/answers -->
         <div id="question-container" class="hide">
             <!-- question div holds question -->
@@ -30,12 +49,13 @@
                 <button class="btn">Answer 4</button>
             </div>
         </div>
+        <!-- text content updated dynamically with feedback -->
         <div id="feedback-container" class="hide"><p id="feedback" class="feedback"></p></div>
         <!-- control buttons to start quiz and continue to the next question -->
         <div class="controls">
-            <button id="start-btn" class="start-btn btn">Start</button>
-            <button id="next-btn" class="next-btn btn hide">Next</button>
+            <button type="button" id="start-btn" class="start-btn btn">Start</button>
+            <button type="button" id="next-btn" class="next-btn btn hide">Next</button>
         </div>
-    </div>
+    </section>
 </body>
 </html>
