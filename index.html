@@ -10,8 +10,11 @@
 </head>
 <body>
     <header>
-        <a id="highscore-link" href="#highscores">view highscores here</a>
+        <!-- Button reveals highscores from local storage -->
+        <button id="highscore-button" class="btn">view highscores here</button>
+        <!-- timer text content updated dynamically -->
         <p id="timer" class="timer"></p>
+        <!-- starting message of quiz -->
         <div id="start-message" class="start-message">
             <h1>JavaScript Coding Quiz</h1>
             <h2>view high scores</h2>
@@ -21,22 +24,26 @@
         </div>
     </header>
 
-    <section id="log-score" class="log-score hide">
-        <form id="inital-input" class="initial-input">
+    <!-- end game form to log user initials for highscore data -->
+    <section id="log-initials" class="log-score hide">
+        <!-- form container -->
+        <form id="inital-form" class="initial-form">
+            <!-- label for text input and submit button -->
             <label for="initials">Enter your initials: 
-                <input type="text" name="initials"placeholder="ex. ABC"/>
-                <button type="submit">Submit</button>
+                <input id="initial-input" type="text" name="initials"placeholder="ex. ABC"/>
+                <button id="initial-submit" type="submit">Submit</button>
                 <p id="highscore-display">Highscore: 55</p>
             </label>
         </form>
     </section>
 
+    <!-- highscore display section -->
     <section id="highscores" class="hide">
         <p>highscores</p>
     </section>
     
     <!-- container holds quiz content -->
-    <section class="container">
+    <section id="quiz-content-container" class="container">
         <!-- question-container holds question/answers -->
         <div id="question-container" class="hide">
             <!-- question div holds question -->
@@ -50,7 +57,7 @@
             </div>
         </div>
         <!-- text content updated dynamically with feedback -->
-        <div id="feedback-container" class="hide"><p id="feedback" class="feedback"></p></div>
+        <div id="feedback-container" class="hide"><p id="feedback-p" class="feedback"></p></div>
         <!-- control buttons to start quiz and continue to the next question -->
         <div class="controls">
             <button type="button" id="start-btn" class="start-btn btn">Start</button>
