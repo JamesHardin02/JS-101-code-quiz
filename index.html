@@ -25,21 +25,20 @@
     </header>
 
     <!-- end game form to log user initials for highscore data -->
-    <section id="log-initials" class="log-score hide">
+    <section id="log-initials" class="log-initials hide">
         <!-- form container -->
         <form id="inital-form" class="initial-form">
             <!-- label for text input and submit button -->
             <label for="initials">Enter your initials: 
-                <input id="initial-input" type="text" name="initials"placeholder="ex. ABC"/>
-                <button id="initial-submit" type="submit">Submit</button>
-                <p id="highscore-display">Highscore: 55</p>
+                <input id="initial-input" type="text" name="initials" placeholder="ex. ABC"/>
+                <button id="initial-submit" type="button">Submit</button>
             </label>
         </form>
     </section>
 
     <!-- highscore display section -->
     <section id="highscores" class="hide">
-        <p>highscores</p>
+        <button id='back-to-quiz' type='button' class="btn hide">Back To Quiz</button>
     </section>
     
     <!-- container holds quiz content -->
@@ -59,9 +58,10 @@
         <!-- text content updated dynamically with feedback -->
         <div id="feedback-container" class="hide"><p id="feedback-p" class="feedback"></p></div>
         <!-- control buttons to start quiz and continue to the next question -->
-        <div class="controls">
+        <div id="controls" class="controls">
             <button type="button" id="start-btn" class="start-btn btn">Start</button>
             <button type="button" id="next-btn" class="next-btn btn hide">Next</button>
+            <button type="button" id="home-btn" class="home-btn btn hide">Back To Start</button>
         </div>
     </section>
 </body>

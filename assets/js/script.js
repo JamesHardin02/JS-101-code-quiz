@@ -9,12 +9,28 @@ const startMessageEl = document.getElementById('start-message');
 const quizContentContainerEl = document.getElementById('quiz-content-container');
 const highscoresEl = document.getElementById('highscores');
 const initialFormEl = document.getElementById('log-initials');
+const initialInputEl = document.getElementById('initial-input');
+const initalSubmitButtonEl = document.getElementById('initial-submit');
+const highscoreSectionEl = document.getElementById('highscores');
+const highscoreButtonEl = document.getElementById('highscore-button');
+const backToQuizButtonEl = document.getElementById('back-to-quiz');
+const backToStartButtonEl = document.getElementById('home-btn');
+const timerEl = document.getElementById('timer');
 
+var scoreListEL = document.createElement("ul");
+
+let paused = true; 
+let quizRunning = false;
+let score = 0;
 let answered = false;
-
 let shuffledQuestions, currentQuestionIndex;
 
-const userData = []
+const userData = {
+    initials: '',
+    score: 0
+}
+
+let highscore = JSON.parse(localStorage.getItem("userData")) || [];
 
 const questions = [
     {
@@ -40,65 +56,91 @@ const questions = [
     }
 ];
 
-// input score obj for player push to highscore array
-
-function saveScore(time){
-// set local storage
-    userData
-    localStorage.setItem(JSON.stringify(userData))
-    //
-}
-
-function displayInitialForm() {
-
-}
+function backToQuiz() {
+    highscoreSectionEl.classList.add('hide');
+    paused = false;
+    if (quizRunning){
+        questionContainerEl.classList.remove('hide');
+        backToQuizButtonEl.classList.add('hide');
+        highscoreSectionEl.classList.add('hide');
+    } else {
+        startButton.classList.remove('hide');
+        startMessageEl.classList.remove('hide');
+        highscoreButtonEl.classList.remove('hide');
+        timerEl.classList.add('hide');
+    }
+};
 
 function displayHighscores() {
-// append highscores to page
+    // check if timer is going: stop it
+    scoreListEL.textContent = ''
+    if (quizRunning){
+        paused = true;
+        backToQuizButtonEl.textContent = "Back To Quiz"
+        backToQuizButtonEl.classList.remove('hide')
+    } else {
+        backToQuizButtonEl.textContent = "Back To Start"
+        backToQuizButtonEl.classList.remove('hide')
+    }
+    // go back to quiz at question index
+    console.log(highscore)
+    // append highscores to page
+    //hide main message
+    startButton.classList.add('hide');
+    nextButton.classList.add('hide');
+    startMessageEl.classList.add('hide');
+    initialFormEl.classList.add('hide');
     questionContainerEl.classList.add('hide');
     feedbackContainerEl.classList.add('hide');
-    let highscore = JSON.parse(localStorage.getItem("highscores")) || [];
+    highscoreSectionEl.classList.remove('hide');
+
+    highscoreSectionEl.appendChild(scoreListEL);
     //loop through data append data to page
-    
+    highscore.forEach(element => {
+        var listItemEl = document.createElement('li');
+        listItemEl.innerHTML = "<p>" + element.initials + ": " + element.score + "</p>"
+        // append ul to highscoreSectionEl
+        scoreListEL.appendChild(listItemEl);
+    });
 }
 
-function enterInitialsMenu() {
+// input score obj for player push to highscore array
 
+function saveScore(){
+    // set initials submitted and score to local storage
+    userData.initials = initialInputEl.value;
+    userData.score = score;
+    highscore.push(userData);
+    localStorage.setItem('userData', JSON.stringify(highscore));
+    displayHighscores();
 }
-
-// --------------- END GAME HANDLERS --------------- //
-function endGameHandler(){
-        // hide everything, ask for initials to store name and score, 
-        quizContentContainerEl.classList.add('hide')
-        displayInitialForm()
-        // update highscoreEl with highscore data
-        // display highscores
-        highscoresEl.classList.remove('hide')
-        //--> need save/load functions
-}
-// =============== END OF END GAME HANDLERS =============== //
 
 //template
 // ---------------  --------------- //
 // ===============  =============== //
+
+// --------------- END GAME HANDLERS --------------- //
+
+// =============== END OF END GAME HANDLERS =============== //
 
 // --------------- ANSWER CLICKED HANDLERS --------------- //
 // evaluates whether correct or incorrect and executes corresponding actions
 function displayFeedback(correct){
     if (correct) {
         // sets feedback text to correct
-        feedbackPEl.textContent =  "Correct"
+        feedbackPEl.textContent =  "Correct";
         // reveal the feedback section
-        feedbackContainerEl.classList.remove('hide')
+        feedbackContainerEl.classList.remove('hide');
         // add time
-        time += 5
+        time += 5;
+        score += 5;
     } else {
         // sets feedback text to incorrect
-        feedbackPEl.textContent =  "Incorrect"
+        feedbackPEl.textContent =  "Incorrect";
         // reveals the feedback section
-        feedbackContainerEl.classList.remove('hide')
+        feedbackContainerEl.classList.remove('hide');
         // reduce time
-        time -= 5
+        time -= 5;
     }
 };
 
@@ -115,20 +157,20 @@ function answerClicked(event) {
     if (answered === false) {
         // question is now answered
         answered = true
+        // increment to next question index
+        currentQuestionIndex++
         // evaluate if answere was correct or incorrect
         displayFeedback(correct)
     }
 
     // if the next question index is a valid location in shuffledQuestions
     // then reveal the nextButton
-    if (shuffledQuestions.length > currentQuestionIndex + 1) {
+    if (shuffledQuestions.length > currentQuestionIndex) {
         nextButton.classList.remove('hide');
     } 
     // else the last question was answered
     else {
-        endGameHandler()
-        startButton.innerText = 'Restart';
-        startButton.classList.remove('hide');
+        quizRunning = false;
     };
 };
 // =============== END OF ANSWER CLICKED HANDLERS =============== //
@@ -185,45 +227,60 @@ function setNextQuestion() {
 // --------------- START-GAME SECTION --------------- //
 const startingMinute = 1;
 let time = startingMinute * 30;
-const timerEl = document.getElementById('timer');
-
-// decrements time by 1 second
-function countdown() {
-    if (time >= 0) {
-        const minutes = Math.floor(time/60);
-        let seconds = time % 60;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
-        timerEl.innerHTML = `${minutes}:${seconds}`;
-        time--
-    } else {
-        time = 0
-        saveScore(time)
-        displayHighscores()
-    }
-};
 
 // 2: Initialized a new game
 function startGame(){
-    //sets defaults; question is not answered
-    answered = false;
-
-    // every second countdown function is called
-    setInterval(countdown, 1000);
-
-    // hides start-button, answer-feedback, and the starting-message
-    startButton.classList.add('hide');
-    feedbackContainerEl.classList.add('hide')
-    startMessageEl.classList.add('hide')
-
+    // scoreListEL.textContent = ''
+    quizRunning = true;
     // shuffles the questions 
     shuffledQuestions = questions.sort(() => Math.random - .5); //make random work
     // starts at the beginning of questions array
     currentQuestionIndex = 0;
+    //sets defaults; question is not answered
+    answered = false;
+    score = 0;
+
+    // hides start-button, answer-feedback, and the starting-message
+    startButton.classList.add('hide');
+    feedbackContainerEl.classList.add('hide');
+    startMessageEl.classList.add('hide');
+
     // reveals question container element
     questionContainerEl.classList.remove('hide');
 
     // reveals question according to index
     setNextQuestion();
+
+    // every second countdown function is called
+    // countdown();
+    paused = false;
+    timerEl.classList.remove('hide');
+    var countdown = setInterval(function(){
+        if (!paused) {
+            const minutes = Math.floor(time/60);
+            let seconds = time % 60;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            timerEl.innerHTML = `${minutes}:${seconds}`;
+            time--
+            console.log(shuffledQuestions.length, currentQuestionIndex)
+            if (time <= 0) {
+                time = 0;
+                clearInterval(countdown);
+                quizRunning = false;
+                quizContentContainerEl.classList.add('hide');
+                initialFormEl.classList.remove('hide');
+            } else if (shuffledQuestions.length <= currentQuestionIndex){
+                clearInterval(countdown);
+                quizRunning = false;
+                highscoreButtonEl.classList.add('hide')
+                quizContentContainerEl.classList.add('hide');
+                initialFormEl.classList.remove('hide');
+            };
+        };
+        if (!quizRunning && !paused){
+            time = startingMinute * 30
+        };
+    }, 1000); 
 };
 // =============== END OF START GAME SECTION =============== //
 
@@ -234,7 +291,11 @@ startButton.addEventListener('click', startGame);
 nextButton.addEventListener('click', () => {
     answered = false;
     feedbackContainerEl.classList.add('hide')
-    currentQuestionIndex++
     setNextQuestion()
 });
+
+initalSubmitButtonEl.addEventListener('click', saveScore)
+
+highscoreButtonEl.addEventListener('click', displayHighscores)
+backToQuizButtonEl.addEventListener('click', backToQuiz)
 // =============== END OF EVENT LISTENERS SECTION =============== //

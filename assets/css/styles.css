@@ -61,7 +61,6 @@ body.incorrect{
 }
 
 .btn {
-    
     font-size: 2em;
     width: 25%;
     border: 1px solid hsl(--var(--hue), 100%, 30%);
