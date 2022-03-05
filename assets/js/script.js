@@ -1,26 +1,306 @@
-var startButtonEl = document.querySelector("button[value='start']");
-var questionSectionEl = document.getElementById("question");
-var score = 0;
-var questions = [
+const startButton = document.getElementById('start-btn');
+const nextButton = document.getElementById('next-btn');
+const questionContainerEl = document.getElementById('question-container');
+const questionEl = document.getElementById('question')
+const answerButtonsEl = document.getElementById('answer-buttons');
+const feedbackContainerEl = document.getElementById('feedback-container');
+const feedbackPEl = document.getElementById('feedback-p')
+const startMessageEl = document.getElementById('start-message');
+const quizContentContainerEl = document.getElementById('quiz-content-container');
+const highscoresEl = document.getElementById('highscores');
+const initialFormEl = document.getElementById('log-initials');
+const initialInputEl = document.getElementById('initial-input');
+const initalSubmitButtonEl = document.getElementById('initial-submit');
+const highscoreSectionEl = document.getElementById('highscores');
+const highscoreButtonEl = document.getElementById('highscore-button');
+const backToQuizButtonEl = document.getElementById('back-to-quiz');
+const backToStartButtonEl = document.getElementById('home-btn');
+const timerEl = document.getElementById('timer');
+
+var scoreListEL = document.createElement("ul");
+
+let paused = true; 
+let quizRunning = false;
+let score = 0;
+let answered = false;
+let shuffledQuestions, currentQuestionIndex;
+
+let userData = {
+    initials: '',
+    score: 0
+}
+
+let highscore = JSON.parse(localStorage.getItem("userData")) || [];
+
+const questions = [
     {
-        question: "Which of the following is a primitive DataType",
-        answers: ["array", "function", "integers", "object"],
-        correctIndex: 2
+        question: "which datatype is primitive?",
+        answers: [
+            {text: 'boolean', correct: true},
+            {text: 'array', correct: false}
+        ]
+    },
+    {
+        question: "which is not a falsy value?",
+        answers: [
+            {text: '0', correct: false},
+            {text: '"nothing"', correct: true}
+        ]
+    },
+    {
+        question: "A function passed as an argument to another function is called what?",
+        answers: [
+            {text: 'a function sequence', correct: false},
+            {text: 'a callback function', correct: true}
+        ]
     }
 ];
 
-
-function runQuiz() {
-    startButtonEl.value, startButtonEl.innerHTML = "submit"
-    // loop through questions array, display question 
-    // until an answer is clicked, if right then score++
-    for (var i = 0; i < questions.length; i++){
-        questionSectionEl.innerHTML = questions[i].question;
-        // loop length of answers displaying each
-        // click event for each, data-id for 
-    };
+function backToQuiz() {
+    highscoreSectionEl.classList.add('hide');
+    highscoreButtonEl.classList.remove('hide');
+    paused = false;
+    if (quizRunning){
+        questionContainerEl.classList.remove('hide');
+        backToQuizButtonEl.classList.add('hide');
+        highscoreSectionEl.classList.add('hide');
+    } else {
+        timerEl.classList.add('hide');
+        highscoreButtonEl.classList.remove('hide');
+        startMessageEl.classList.remove('hide');
+        startButton.classList.remove('hide');
+    }
 };
 
-// start button on click populates 
-// question div with first question and answer choices
-startButtonEl.addEventListener("click", runQuiz);
+function displayHighscores() {
+    // check if timer is going: stop it
+    scoreListEL.textContent = ''
+    highscore = JSON.parse(localStorage.getItem("userData")) || [];
+
+    if (quizRunning){
+        paused = true;
+        backToQuizButtonEl.textContent = "Back To Quiz"
+        backToQuizButtonEl.classList.remove('hide')
+    } else {
+        backToQuizButtonEl.textContent = "Back To Start"
+        backToQuizButtonEl.classList.remove('hide')
+    }
+    // go back to quiz at question index
+    console.log(highscore)
+    // append highscores to page
+    //hide main message
+    highscoreButtonEl.classList.add('hide');
+    startButton.classList.add('hide');
+    nextButton.classList.add('hide');
+    startMessageEl.classList.add('hide');
+    initialFormEl.classList.add('hide');
+    questionContainerEl.classList.add('hide');
+    feedbackContainerEl.classList.add('hide');
+    highscoreSectionEl.classList.remove('hide');
+
+    highscoreSectionEl.appendChild(scoreListEL);
+    //loop through data append data to page
+    highscore.forEach(element => {
+        var listItemEl = document.createElement('li');
+        listItemEl.className = "highscore-list-item";
+        listItemEl.innerHTML = "<p>" + element.initials + ": " + element.score + "</p>"
+        // append ul to highscoreSectionEl
+        scoreListEL.appendChild(listItemEl);
+    });
+}
+
+// input score obj for player push to highscore array
+
+function saveScore(){
+    // set initials submitted and score to local storage.
+    userData.initials = initialInputEl.value;
+    userData.score = score;
+    highscore.push(userData);
+    localStorage.setItem('userData', JSON.stringify(highscore));
+    displayHighscores();
+}
+
+//template
+// ---------------  --------------- //
+// ===============  =============== //
+
+// --------------- END GAME HANDLERS --------------- //
+
+// =============== END OF END GAME HANDLERS =============== //
+
+// --------------- ANSWER CLICKED HANDLERS --------------- //
+// evaluates whether correct or incorrect and executes corresponding actions
+function displayFeedback(correct){
+    if (correct) {
+        // sets feedback text to correct
+        feedbackPEl.textContent =  "Correct";
+        // reveal the feedback section
+        feedbackContainerEl.classList.remove('hide');
+        // add time
+        time += 5;
+        score += 5;
+    } else {
+        // sets feedback text to incorrect
+        feedbackPEl.textContent =  "Incorrect";
+        // reveals the feedback section
+        feedbackContainerEl.classList.remove('hide');
+        // reduce time
+        time -= 5;
+    }
+};
+
+// 5: answer clicked handler: determines whether user has already answered
+// if not then feedback is displayed and func. determines if there 
+// are more questions to be answered or if this call was the last question
+function answerClicked(event) {
+    // store button object from event.target
+    const selectedButton = event.target;
+    // store data-correct value to determine 
+    // if button is correct or incorrect answer
+    const correct = selectedButton.dataset.correct;
+    // if not yet answered then evaluate
+    if (answered === false) {
+        // question is now answered
+        answered = true
+        // increment to next question index
+        currentQuestionIndex++
+        // evaluate if answere was correct or incorrect
+        displayFeedback(correct)
+    }
+
+    // if the next question index is a valid location in shuffledQuestions
+    // then reveal the nextButton
+    if (shuffledQuestions.length > currentQuestionIndex) {
+        nextButton.classList.remove('hide');
+    } 
+    // else the last question was answered
+    else {
+        quizRunning = false;
+    };
+};
+// =============== END OF ANSWER CLICKED HANDLERS =============== //
+
+// --------------- DISPLAY QUESTION AND ANSWERS SECTION --------------- //
+// 4: displays the question and answers from the question argument: an object
+function showQuestion(question){
+    // populates the question container with the question
+    questionEl.innerText = question.question;
+    quizContentContainerEl.classList.remove('hide');
+
+    // loops through the array of answers and for each creates a button
+    question.answers.forEach(answer => {
+        // create button
+        const button = document.createElement('button')
+        // button text is answer
+        button.innerText = answer.text
+        // style the button
+        button.classList.add('btn')
+        // if the answer has a correct attribute then
+        // attribute that data to the button
+        if (answer.correct){
+            button.dataset.correct = answer.correct
+        }
+        // add click event listener to each button, when clicked fires answerClicked
+        button.addEventListener('click', answerClicked)
+        // appends button to button container
+        answerButtonsEl.appendChild(button)
+    });
+};
+// =============== END OF DISPLAY QUESTION AND ANSWERS SECTION =============== //
+
+// --------------- NEXT QUESTION INITALIZATION --------------- //
+// removes elements from page so new question elements can take their place
+function resetState() {
+    // hides the next button
+    nextButton.classList.add('hide');
+    // while the button container has a first child remove that child
+    // this empties the button container
+    while (answerButtonsEl.firstChild) {
+        answerButtonsEl.removeChild(answerButtonsEl.firstChild)
+    }
+};
+
+// 3: handles initalizing next question
+function setNextQuestion() {
+    // removes current items from page
+    resetState()
+    // passes the current index of the object containing question/answer data
+    // to the show question function which displays that data on the page
+    showQuestion(shuffledQuestions[currentQuestionIndex]);
+};
+// =============== END OF NEXT QUESTION INITALIZATION =============== //
+
+// --------------- START-GAME SECTION --------------- //
+const startingMinute = 1;
+let time = startingMinute * 30;
+
+// 2: Initialized a new game
+function startGame(){
+    quizRunning = true;
+    // shuffles the questions 
+    shuffledQuestions = questions.sort(() => Math.random - .5); //make random work
+    // starts at the beginning of questions array
+    currentQuestionIndex = 0;
+    //sets defaults; question is not answered
+    answered = false;
+    score = 0;
+
+    // hides start-button, answer-feedback, and the starting-message
+    startButton.classList.add('hide');
+    feedbackContainerEl.classList.add('hide');
+    startMessageEl.classList.add('hide');
+
+    // reveals question container element
+    questionContainerEl.classList.remove('hide');
+
+    // reveals question according to index
+    setNextQuestion();
+
+    // every second countdown function is called
+    // countdown();
+    paused = false;
+    timerEl.classList.remove('hide');
+    var countdown = setInterval(function(){
+        if (!paused) {
+            const minutes = Math.floor(time/60);
+            let seconds = time % 60;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            timerEl.innerHTML = `${minutes}:${seconds}`;
+            time--
+            console.log(shuffledQuestions.length, currentQuestionIndex)
+            if (time <= 0) {
+                time = 0;
+                clearInterval(countdown);
+                quizRunning = false;
+                quizContentContainerEl.classList.add('hide');
+                initialFormEl.classList.remove('hide');
+            } else if (shuffledQuestions.length <= currentQuestionIndex){
+                clearInterval(countdown);
+                quizRunning = false;
+                highscoreButtonEl.classList.add('hide')
+                quizContentContainerEl.classList.add('hide');
+                initialFormEl.classList.remove('hide');
+            };
+        };
+        if (!quizRunning && !paused){
+            time = startingMinute * 30;
+        };
+    }, 1000); 
+};
+// =============== END OF START GAME SECTION =============== //
+
+// --------------- EVENT LISTENERS SECTION --------------- //
+// 1: fire startGame function when start button is clicked
+startButton.addEventListener('click', startGame);
+
+nextButton.addEventListener('click', () => {
+    answered = false;
+    feedbackContainerEl.classList.add('hide')
+    setNextQuestion()
+});
+
+initalSubmitButtonEl.addEventListener('click', saveScore)
+
+highscoreButtonEl.addEventListener('click', displayHighscores)
+backToQuizButtonEl.addEventListener('click', backToQuiz)
+// =============== END OF EVENT LISTENERS SECTION =============== //
