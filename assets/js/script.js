@@ -25,7 +25,7 @@ let score = 0;
 let answered = false;
 let shuffledQuestions, currentQuestionIndex;
 
-const userData = {
+let userData = {
     initials: '',
     score: 0
 }
@@ -58,22 +58,25 @@ const questions = [
 
 function backToQuiz() {
     highscoreSectionEl.classList.add('hide');
+    highscoreButtonEl.classList.remove('hide');
     paused = false;
     if (quizRunning){
         questionContainerEl.classList.remove('hide');
         backToQuizButtonEl.classList.add('hide');
         highscoreSectionEl.classList.add('hide');
     } else {
-        startButton.classList.remove('hide');
-        startMessageEl.classList.remove('hide');
-        highscoreButtonEl.classList.remove('hide');
         timerEl.classList.add('hide');
+        highscoreButtonEl.classList.remove('hide');
+        startMessageEl.classList.remove('hide');
+        startButton.classList.remove('hide');
     }
 };
 
 function displayHighscores() {
     // check if timer is going: stop it
     scoreListEL.textContent = ''
+    highscore = JSON.parse(localStorage.getItem("userData")) || [];
+
     if (quizRunning){
         paused = true;
         backToQuizButtonEl.textContent = "Back To Quiz"
@@ -86,6 +89,7 @@ function displayHighscores() {
     console.log(highscore)
     // append highscores to page
     //hide main message
+    highscoreButtonEl.classList.add('hide');
     startButton.classList.add('hide');
     nextButton.classList.add('hide');
     startMessageEl.classList.add('hide');
@@ -98,6 +102,7 @@ function displayHighscores() {
     //loop through data append data to page
     highscore.forEach(element => {
         var listItemEl = document.createElement('li');
+        listItemEl.className = "highscore-list-item";
         listItemEl.innerHTML = "<p>" + element.initials + ": " + element.score + "</p>"
         // append ul to highscoreSectionEl
         scoreListEL.appendChild(listItemEl);
@@ -107,7 +112,7 @@ function displayHighscores() {
 // input score obj for player push to highscore array
 
 function saveScore(){
-    // set initials submitted and score to local storage
+    // set initials submitted and score to local storage.
     userData.initials = initialInputEl.value;
     userData.score = score;
     highscore.push(userData);
@@ -180,6 +185,7 @@ function answerClicked(event) {
 function showQuestion(question){
     // populates the question container with the question
     questionEl.innerText = question.question;
+    quizContentContainerEl.classList.remove('hide');
 
     // loops through the array of answers and for each creates a button
     question.answers.forEach(answer => {
@@ -230,7 +236,6 @@ let time = startingMinute * 30;
 
 // 2: Initialized a new game
 function startGame(){
-    // scoreListEL.textContent = ''
     quizRunning = true;
     // shuffles the questions 
     shuffledQuestions = questions.sort(() => Math.random - .5); //make random work
@@ -278,7 +283,7 @@ function startGame(){
             };
         };
         if (!quizRunning && !paused){
-            time = startingMinute * 30
+            time = startingMinute * 30;
         };
     }, 1000); 
 };

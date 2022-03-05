@@ -17,9 +17,9 @@
         <!-- starting message of quiz -->
         <div id="start-message" class="start-message">
             <h1>JavaScript Coding Quiz</h1>
-            <h2>view high scores</h2>
-            <p>The timer is your score. Incorrect answers take 5 seconds off<br/>
-                correct answers add 5 seconds. Start time is 60 seconds.
+            <p>Correct answers are worth 5 points and add 5 seconds to the timer.<br/>
+                Incorrect answers take away 5 points and reduces 5 seconds from the timer.<br/>
+                Start time is 20 seconds.
             </p>
         </div>
     </header>
@@ -27,17 +27,17 @@
     <!-- end game form to log user initials for highscore data -->
     <section id="log-initials" class="log-initials hide">
         <!-- form container -->
-        <form id="inital-form" class="initial-form">
+        <form id="initial-form">
             <!-- label for text input and submit button -->
-            <label for="initials">Enter your initials: 
+            <label for="initials" id="initial-label">Enter your initials: 
                 <input id="initial-input" type="text" name="initials" placeholder="ex. ABC"/>
-                <button id="initial-submit" type="button">Submit</button>
+                <button id="initial-submit" type="button" class="btn">Submit</button>
             </label>
         </form>
     </section>
 
     <!-- highscore display section -->
-    <section id="highscores" class="hide">
+    <section id="highscores" class="highscores hide">
         <button id='back-to-quiz' type='button' class="btn hide">Back To Quiz</button>
     </section>
     
@@ -48,21 +48,16 @@
             <!-- question div holds question -->
             <div id="question">Question</div>
             <!-- answers will be displayed on buttons -->
-            <div id="answer-buttons" class="btn-grid">
-                <button class="btn">Answer 1</button>
-                <button class="btn">Answer 2</button>
-                <button class="btn">Answer 3</button>
-                <button class="btn">Answer 4</button>
-            </div>
+            <div id="answer-buttons" class="btn-grid"></div>
         </div>
         <!-- text content updated dynamically with feedback -->
         <div id="feedback-container" class="hide"><p id="feedback-p" class="feedback"></p></div>
         <!-- control buttons to start quiz and continue to the next question -->
-        <div id="controls" class="controls">
-            <button type="button" id="start-btn" class="start-btn btn">Start</button>
-            <button type="button" id="next-btn" class="next-btn btn hide">Next</button>
-            <button type="button" id="home-btn" class="home-btn btn hide">Back To Start</button>
-        </div>
     </section>
+    <div id="controls" class="controls container">
+        <button type="button" id="start-btn" class="start-btn btn">Start</button>
+        <button type="button" id="next-btn" class="next-btn btn hide">Next</button>
+        <button type="button" id="home-btn" class="home-btn btn hide">Back To Start</button>
+    </div>
 </body>
 </html>

@@ -82,17 +82,33 @@ body.incorrect{
     color: rgb(161, 159, 159);
 }
 
-.start-btn, .next-btn {
+.start-btn, .next-btn, #initial-input, #initial-label, #initial-submit, .highscore-list-item {
     font-size: 1.5rem;
     font-weight: bold;
     padding: 10px 20px;
 }
 
+#initial-label {
+    display: flex;
+}
+
+#highscore-button, #back-to-quiz {
+    width: fit-content;
+}
+.highscores {
+    display: flex;
+    flex-direction: column;
+}
+.highscore-list-item {
+    list-style-type: none;
+    padding: 0;
+}
 .controls {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 
 .hide{
     display: none;
