@@ -37,21 +37,59 @@ const questions = [
         question: "which datatype is primitive?",
         answers: [
             {text: 'boolean', correct: true},
-            {text: 'array', correct: false}
+            {text: 'array', correct: false},
+            {text: 'function', correct: false},
+            {text: 'switch', correct: false}
         ]
     },
     {
         question: "which is not a falsy value?",
         answers: [
             {text: '0', correct: false},
-            {text: '"nothing"', correct: true}
+            {text: '"nothing"', correct: true},
+            {text: '""', correct: false},
+            {text: 'null', correct: false},
         ]
     },
     {
         question: "A function passed as an argument to another function is called what?",
         answers: [
             {text: 'a function sequence', correct: false},
-            {text: 'a callback function', correct: true}
+            {text: 'a callback function', correct: true},
+            {text: 'function yeilding', correct: false},
+            {text: 'function tying', correct: false},
+        ]
+    },
+    {
+        question: "True or False: there must be a type declaration before variable names",
+        answers: [
+            {text: 'true', correct: false},
+            {text: 'false', correct: true}
+        ]
+    },
+    {
+        question: "the loop for (var i = 0; i < 10; i++)' loops until ...",
+        answers: [
+            {text: 'i = 10', correct: true},
+            {text: 'i = 9', correct: false},
+            {text: 'i >= 0', correct: false},
+            {text: 'i !== 10', correct: false},
+        ]
+    },
+    {
+        question: "True or False: variables defined in a function can be called outside of that function",
+        answers: [
+            {text: 'True', correct: false},
+            {text: 'false', correct: true}
+        ]
+    },
+    {
+        question: "Which is not a truthy value",
+        answers: [
+            {text: '"false"', correct: false},
+            {text: '-0', correct: true},
+            {text: '[]', correct: false},
+            {text: '-1', correct: false},
         ]
     }
 ];
@@ -64,6 +102,9 @@ function backToQuiz() {
         questionContainerEl.classList.remove('hide');
         backToQuizButtonEl.classList.add('hide');
         highscoreSectionEl.classList.add('hide');
+        if(answered){
+            nextButton.classList.remove('hide');
+        }
     } else {
         timerEl.classList.add('hide');
         highscoreButtonEl.classList.remove('hide');
@@ -72,6 +113,7 @@ function backToQuiz() {
     }
 };
 
+// --------------- END GAME HANDLERS --------------- //
 function displayHighscores() {
     // check if timer is going: stop it
     scoreListEL.textContent = ''
@@ -119,13 +161,6 @@ function saveScore(){
     localStorage.setItem('userData', JSON.stringify(highscore));
     displayHighscores();
 }
-
-//template
-// ---------------  --------------- //
-// ===============  =============== //
-
-// --------------- END GAME HANDLERS --------------- //
-
 // =============== END OF END GAME HANDLERS =============== //
 
 // --------------- ANSWER CLICKED HANDLERS --------------- //
@@ -232,7 +267,7 @@ function setNextQuestion() {
 
 // --------------- START-GAME SECTION --------------- //
 const startingMinute = 1;
-let time = startingMinute * 30;
+let time = startingMinute * 20;
 
 // 2: Initialized a new game
 function startGame(){
