@@ -82,7 +82,7 @@ body.incorrect{
     color: rgb(161, 159, 159);
 }
 
-.start-btn, .next-btn, #initial-input, #initial-label, #initial-submit, .highscore-list-item {
+.start-btn, .next-btn, #initial-input, #initial-label, #initial-submit, .highscore-list-item, .timer {
     font-size: 1.5rem;
     font-weight: bold;
     padding: 10px 20px;
@@ -108,7 +108,6 @@ body.incorrect{
     justify-content: center;
     align-items: center;
 }
-
 
 .hide{
     display: none;
